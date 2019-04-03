@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <!-- 在载入页面之前判断是否有session,有则载入页面,没有打回login页面 -->
+  <script>
+    var xhr = new XMLHttpRequest();
+    xhr.open('post', 'api/checkLoading.php');
+    xhr.send();
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState == 4 && xhr.status == 200) {
+        var obj = JSON.parse(xhr.responseText);
+        console.log(obj);
+
+        if (obj.code != 250) {
+          location = 'login.html';
+        }
+      }
+    }
+  </script>
+  <meta charset="utf-8">
+  <title>Comments &laquo; Admin</title>
+  <link rel="stylesheet" href="../assets/vendors/bootstrap/css/bootstrap.css">
+  <link rel="stylesheet" href="../assets/vendors/font-awesome/css/font-awesome.css">
+  <link rel="stylesheet" href="../assets/vendors/nprogress/nprogress.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+  <script src="../assets/vendors/nprogress/nprogress.js"></script>
+  <style>
+    td {
+      max-width: 400px;
+    }
+  </style>
+</head>
+
+<body>
+  <script>NProgress.start()</script>
+
+  <div class="main">
+    <nav class="navbar">
+      <button class="btn btn-default navbar-btn fa fa-bars"></button>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="profile.html"><i class="fa fa-user"></i>个人中心</a></li>
+        <li><a href="../admin/api/dologout.php"><i class="fa fa-sign-out"></i>退出</a></li>
+      </ul>
+    </nav>
+    <div class="container-fluid">
+      <div class="page-title">
+        <h1>所有评论</h1>
+      </div>
+      <!-- 有错误信息时展示 -->
+      <!-- <div class="alert alert-danger">
+        <strong>错误！</strong>发生XXX错误
+      </div> -->
+      <div class="page-action">
+        <!-- show when multiple checked -->
+        <div class="btn-batch" style="display: none">
+          <button class="btn btn-info btn-sm" onclick="batchEdit('approved')">批量批准</button>
+          <button class="btn btn-warning btn-sm" onclick="batchEdit('rejected')">批量拒绝</button>
+          <button class="btn btn-danger btn-sm" onclick="batchEdit('trashed')">批量删除</button>
+        </div>
+        <ul class="pagination pagination-sm pull-right">
+          <li><a href="#">上一页</a></li>
+          <li><a href="#">1</a></li>
+          <li><a href="#">2</a></li>
+          <li><a href="#">3</a></li>
+          <li><a href="#">下一页</a></li>
+        </ul>
+      </div>
+      <table class="table table-striped table-bordered table-hover">
+        <thead>
+          <tr>
+            <th class="text-center" width="40"><input type="checkbox"></th>
+            <th>作者</th>
+            <th>评论</th>
+            <th>评论在</th>
+            <th>提交于</th>
+            <th>状态</th>
+            <th class="text-center" width="100">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="danger">
+            <td class="text-center"><input type="checkbox"></td>
+            <td>大大</td>
+            <td>楼主好人，顶一个</td>
+            <td>《Hello world》</td>
+            <td>2016/10/07</td>
+            <td>未批准</td>
+            <td class="text-center">
+              <a href="post-add.html" class="btn btn-info btn-xs">批准</a>
+              <a href="javascript:;" class="btn btn-danger btn-xs">删除</a>
+            </td>
+          </tr>
+          <tr>
+            <td class="text-center"><input type="checkbox"></td>
+            <td>大大</td>
+            <td>楼主好人，顶一个</td>
+            <td>《Hello world》</td>
+            <td>2016/10/07</td>
+            <td>已批准</td>
+            <td class="text-center">
+              <a href="post-add.html" class="btn btn-warning btn-xs">驳回</a>
+              <a href="javascript:;" class="btn btn-danger btn-xs">删除</a>
+            </td>
+          </tr>
+          <tr>
+            <td class="text-center"><input type="checkbox"></td>
+            <td>大大</td>
+            <td>楼主好人，顶一个</td>
+            <td>《Hello world》</td>
+            <td>2016/10/07</td>
+            <td>已批准</td>
+            <td class="text-center">
+              <a href="post-add.html" class="btn btn-warning btn-xs">驳回</a>
+              <a href="javascript:;" class="btn btn-danger btn-xs">删除</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="aside">
+    <div class="profile">
+      <img class="avatar" src="../uploads/avatar.jpg">
+      <h3 class="name">布头儿</h3>
+    </div>
+    <ul class="nav">
+      <li>
+        <a href="index.html"><i class="fa fa-dashboard"></i>仪表盘</a>
+      </li>
+      <li>
+        <a href="#menu-posts" class="collapsed" data-toggle="collapse">
+          <i class="fa fa-thumb-tack"></i>文章<i class="fa fa-angle-right"></i>
+        </a>
+        <ul id="menu-posts" class="collapse">
+          <li><a href="posts.html">所有文章</a></li>
+          <li><a href="post-add.html">写文章</a></li>
+          <li><a href="categories.html">分类目录</a></li>
+        </ul>
+      </li>
+      <li class="active">
+        <a href="comments.html"><i class="fa fa-comments"></i>评论</a>
+      </li>
+      <li>
+        <a href="users.html"><i class="fa fa-users"></i>用户</a>
+      </li>
+      <li>
+        <a href="#menu-settings" class="collapsed" data-toggle="collapse">
+          <i class="fa fa-cogs"></i>设置<i class="fa fa-angle-right"></i>
+        </a>
+        <ul id="menu-settings" class="collapse">
+          <li><a href="nav-menus.html">导航菜单</a></li>
+          <li><a href="slides.html">图片轮播</a></li>
+          <li><a href="settings.html">网站设置</a></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <script src="../assets/vendors/jquery/jquery.js"></script>
+  <script src="../assets/vendors/bootstrap/js/bootstrap.js"></script>
+  <script>NProgress.done()</script>
+</body>
+
+</html>
+<script>
+  //将查询与写入数据封装成函数
+  var globlePage, totalPages;
+  function getPage(page) {
+    globlePage = page;
+    $.get({
+      url: './api/getComments.php',
+      data: {
+        'pageIndex': page,
+        'pageSize': 10
+      },
+      dataType: 'json',
+      success: function (obj) {
+        totalPages=obj.pageIndex
+        //每次刷新都要去除thead里面的checkbox的选中
+        $('thead :checkbox').attr('checked',false)
+        console.log(obj);
+        // 调用模板函数,生成一个html变量,储存obj的信息
+        //更改后请求的回复信息存在obj.data里面,所以List的值需要修改
+        // var html=template('tplTr',{list:obj});
+        var html = template('tplTr', { list: obj.data });
+        // console.log(html);
+        $('tbody').html(html);
+        //页码生成,调用模板函数 pageIndex
+        var html1 = template('pageIndex', { pageIndex: obj.pageIndex, page: page })
+        //console.log(html1);
+        $('.pagination').html(html1)
+
+      }
+    })
+  }
+  getPage(1);
+
+
+
+
+  // 给thead中checkedbox添加点击事件
+  $('thead :checkbox').click(function () {
+    //  全选按钮,点击tbody中的checkbox跟随改变
+    var quanxuan = $('thead :checkbox').prop('checked');
+    $('tbody :checkbox').prop('checked', quanxuan);
+    //批量操作跟随显示
+    if (quanxuan) {
+      $('.btn-batch').fadeIn();
+    } else {
+      $('.btn-batch').fadeOut();
+    }
+
+  }
+  )
+  //给根据body中的checkbox数量判断是否全选
+  //由于tr标签是在所有代码ajax的回调函数中生成的,属于异步,所以不能再这里为tr中的checkbox注册事件
+  //需要使用委托注册
+  // $('tbody :checkbox').click(function () { 
+  //   alert(111);
+  //  })
+
+
+  $('tbody').on('click', ':checkbox', function () {
+    // console.log($('tbody :checked').length);
+
+    //判断选中的checkbox数量是否等于checkbox总数,是则全选,否则未全选
+
+    // if ($('tbody :checked').length==$('tbody :checkbox').length) {
+    //   $('thead :checkbox').prop('checked',true);
+    // }else{
+    //   $('thead :checkbox').prop('checked',false);
+    // }
+    //或者可以简写为
+    $('thead :checkbox').prop('checked', $('tbody :checked').length == $('tbody :checkbox').length);
+    if ($('tbody :checked').length > 0) {
+      $('.btn-batch').fadeIn();
+    } else {
+      $('.btn-batch').fadeOut();
+    }
+  })
+
+
+
+
+
+  //更改单行评论状态函数
+  function changeStatus(st, id) {
+    $.post({
+      url: 'api/editComments.php',
+      data: {
+        status: st,
+        id: id
+      },
+      dataType: 'json',
+      success: function (obj) {
+        if (obj.code == 250) {
+          if(globlePage == totalPages && st == 'trashed' && $('tbody tr').length == 1){
+            getPage(globlePage - 1);
+            }
+          else
+            //刷新当前页
+            {getPage(globlePage);}
+        
+        } else {
+          alert('修改错误');
+        }
+      }
+    })
+  }
+  //批量改变评论状态函数
+  function batchEdit(st) {
+    var str = '';
+    $('tbody :checked').each(function (index, ele) {
+      console.log(ele.value);
+      str += ele.value + ',';
+    });
+
+    str = str.substr(0, str.length - 1);
+    console.log(str);
+    $.post({
+      data: {
+        status: st,
+        id: str
+      },
+      url: './api/editComments.php',
+      dataType:'json',
+      success: function (obj) {
+        console.log(obj);
+        if (obj.code == 250) {
+          getPage(globlePage);
+        } else {
+          alert('修改错误');
+        }
+      }
+    }
+    )
+    if (globlePage==totalPages&&st=='trashed'&&$('thead :checked').length==1) {
+      getPage(globlePage-1)
+    }
+  }
+
+</script>
+<!-- 导入模板 -->
+<script src="../assets/vendors/template-web.js"></script>
+
+<!-- 创建tr模板 -->
+<script type="text/html" id="tplTr">
+  {{each list value}}
+  <!-- 如果是未审核,tyr加一个类叫danger -->
+  {{if value.status=='held'}}
+  <tr class="danger">
+    {{else}}
+  <tr>
+    {{/if}}
+
+    <!-- 给每个checkbox添加一个value属性,保存这个消息在数据库中的id -->
+    <td class="text-center"><input type="checkbox" value="{{value.id}}"></td>
+    <td>{{value.author}}</td>
+    <td>{{value.content}}</td>
+    <td>{{value.title}}</td>
+    <td>{{value.created}}</td>
+    {{if value.status=='held'}}
+    <td>未批准</td>
+    {{else if value.status=='approved'}}
+    <td>已批准</td>
+    {{ else }}
+    <td>已拒绝</td>
+    {{/if}}
+    <td class="text-center">
+        {{if value.status=='held'}}
+      <a href="javascript:changeStatus('approved',{{value.id}})" class="btn btn-info btn-xs">批准</a>
+      {{else if value.status=='approved'}}
+      <a href="javascript:changeStatus('rejected',{{value.id}})" class="btn btn-warning btn-xs">拒绝</a>
+      {{/if}}
+      <a href="javascript:changeStatus('trashed',{{value.id}});" class="btn btn-danger btn-xs">删除</a>
+    </td>
+  </tr>
+  {{/each}}
+</script>
+
+<!-- 创建页码模板 -->
+<script type=text/html id="pageIndex">
+  <!-- 上一页判断,如果是第一页,则跳转到最后一页 -->
+  {{if page==1}}
+  <li><a href="javascript:getPage({{pageIndex}})">上一页</a></li>
+  {{ else }}
+  <li><a href="javascript:getPage({{page}}-1)">上一页</a></li>
+  {{ /if}}
+
+
+      <% for(var i=1;i<=pageIndex;i++) {%>
+        <!-- 选中页码高亮显示 ,这里不能写死,应当由调用页码函数传一个值过来-->
+        {{if i==page}}
+          <li class="active">
+        {{else}}
+          <li>
+        {{/if}}
+        <!-- 设置a标签的点击事件,点击a标签,调用getPage函数,传入i,
+          跳转到a对应的第i页 -->
+        <a href="javascript:getPage({{ i }})">{{i}}</a>
+         </li>
+      <% }%>
+
+<!-- 下一页判断,如果是最后一页,则跳转到第一页 -->
+        {{if page==pageIndex}}
+         <li><a href="javascript:getPage(1)">下一页</a></li>
+       {{   else }}
+        <li><a href="javascript:getPage( {{page}}+1)">下一页</a></li>
+        {{ /if}}
+
+
+</script>
